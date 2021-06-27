@@ -7,7 +7,7 @@ width, height = 800, 640
 
 screen = pygame.display.set_mode((width, height))
 
-background = (255,255,255)#RGB
+background = (255,255,255)
 
 def draw_bg(): #function
 	screen.fill(background)
@@ -20,10 +20,10 @@ while run:
 
 	for event in pygame.event.get():
 		
-		if event.type == pygame.QUIT: #
+		if event.type == pygame.QUIT:
 			run = False
 
-		if event.type == pygame.KEYDOWN: # on press keyboards
+		if event.type == pygame.KEYDOWN:
 			if event. key == pygame.K_1:
 				exit()
 
