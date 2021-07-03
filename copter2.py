@@ -25,8 +25,8 @@ def draw_text(text, font, text_col, x, y):
     i = font.render(text, True, text_col)
     screen.blit(i, (620, 610))
 awan = (0, 0, 0)
-back = pygame.image.load('C:/Users/Faiz/Documents/project_game/img/background/mountain.png')
-sky = pygame.image.load('C:/Users/Faiz/Documents/project_game/img/background/sky_cloud.png')
+back = pygame.image.load(f'img/{self.direction}/{i}.png')
+sky = pygame.image.load()
 bullet_img = pygame.image.load('img/icons/bullet.png').convert_alpha()
 
 def draw_bg():
