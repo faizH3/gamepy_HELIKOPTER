@@ -2,8 +2,8 @@ import pygame
 import os
 
 pygame.init()
-width, height = 800, 640
-
+width = 800
+height = int(width*0.8)
 screen = pygame.display.set_mode((width, height))
 
 pygame.display.set_caption('helicopter')
@@ -18,37 +18,25 @@ down = False
 shoot = False
 
 bg = (100, 100, 255)
-WHITE = (255, 255, 255)
 
-font = pygame.font.SysFont('Futura', 30)
-
-
-def draw_text(text, font, text_col, x, y):
-    i = font.render(text, True, text_col)
-    screen.blit(i, (620, 610))
-
+#image1 = pygame.image.load('img\background\mountain.png')
 
 awan = (0, 0, 0)
-back = pygame.image.load('/home/faiz/git/gamepy_HELIKOPTER/img/background/mountain.png')
-sky = pygame.image.load('/home/faiz/git/gamepy_HELIKOPTER/img/background/sky_cloud.png')
-bullet_img = pygame.image.load('img/icons/bullet.png').convert_alpha()
 
+bullet_img = pygame.image.load('img/icons/bullet.png').convert_alpha()
 
 def draw_bg():
     screen.fill(bg)
-    # pygame.draw.line(screen, awan,(0,610), (width, 610))
-    # screen.blit(image1)
-
-
+    pygame.draw.line(screen, awan,(0,610), (width, 610))
+#   screen.blit(image1)
 class data(pygame.sprite.Sprite):
-    def __init__(self, char_type, a, b, scale, speed, ammo):
+    def __init__(self, char_type, x, y, scale, speed, ammo):
         pygame.sprite.Sprite.__init__(self)
         self.char_type = char_type
         self.alive = True
         self.speed = speed
         self.health = 100
         self.flip = False
-        self.a = self.flip
         self.ammo = ammo
         self.start_ammo = ammo
         # self.health = health
@@ -60,7 +48,7 @@ class data(pygame.sprite.Sprite):
         self.action = 0
         self.update_time = pygame.time.get_ticks()
 
-        animation_types = ['Idle', 'Move', 'Run', 'Death']
+        animation_types = ['Idle', 'Move']
         for animation in animation_types:
 
             temp_list = []
@@ -74,7 +62,7 @@ class data(pygame.sprite.Sprite):
 
         self.image = self.animation_list[self.action][self.frame_index]
         self.rect = self.image.get_rect()
-        self.rect.center = (a, b)
+        self.rect.center = (x, y)
 
     def update(self):
         self.update_animation()
@@ -83,36 +71,35 @@ class data(pygame.sprite.Sprite):
             self.shoot_cooldown -= 1
 
     def move(self, lef, rig):
-        x = 0
-        y = 0
+        dx = 0
+        dy = 0
         if lef:
-            x = -self.speed
-            self.flip = True 
-            self.direction = 1
+            dx = -self.speed
+            self.flip = True
+            self.direction = -1
         if rig:
-            x = self.speed
+            dx = self.speed
             self.flip = False
             self.direction = 1
 
-        self.rect.x += x
-        self.rect.y += y
-
+        self.rect.x += dx
+        self.rect.y += dy
     def fly(self, up, down):
         dx = 0
         dy = 0
         if up:
             dy = -self.speed
-            # self.direction = -1
+            self.direction = -1
         if down:
             dy = self.speed
-            # self.direction = 1
+            self.direction = 1
         self.rect.x += dx
         self.rect.y += dy
    
     def shoot(self):
         if self.shoot_cooldown == 0 and self.ammo>0:
-            self.shoot_cooldown = 25
-            bullet = Bullet(self.rect.centerx + (0*self.rect.size[1]*self.direction), self.rect.centery+(0.9*self.rect.size[1]*self.direction), self.direction)
+            self.shoot_cooldown = 20
+            bullet = Bullet(self.rect.centerx + (1*self.rect.size[0]*self.direction), self.rect.centery, self.direction)
             bullet_group.add(bullet)
             self.ammo -= 1
 
@@ -123,7 +110,7 @@ class data(pygame.sprite.Sprite):
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         if self.frame_index >= len(self.animation_list[self.action]):
-            if self.action == 3:
+            if self.action == 10:
                 self.frame_index = len(self.animation_list[self.action])-1
             else:
                 self.frame_index = 0
@@ -144,11 +131,10 @@ class data(pygame.sprite.Sprite):
     def draw(self):
         screen.blit(pygame.transform.flip(self.image, self.flip, False), self.rect)
 
-
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, direction):
         pygame.sprite.Sprite.__init__(self)
-        self.speed = 1.5
+        self.speed = 2
         self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -165,17 +151,15 @@ class Bullet(pygame.sprite.Sprite):
                 player.health -= 5
                 self.kill()
                         
-        if pygame.sprite.spritecollide(enemy, bullet_group, False):
-            if enemy.alive:
-                enemy.health -= 0
-                self.kill()
+        # if pygame.sprite.spritecollide(enemy, bullet_group, False):
+        #     if enemy.alive:
+        #         enemy.health -= 25
+        #         self.kill()
 
 
 bullet_group = pygame.sprite.Group()
 
-player = data('player', 200, 320, 1, 1, 100)
-enemy = data('enemy', 300, 610, 0.5, 1, 20)
-
+player = data('player', 200, 320, 1, 1, 1000)
 
 run = True
 while run:
@@ -183,20 +167,8 @@ while run:
     clock.tick(fps)
 
     draw_bg()
-
-
-    # screen.blit(sky, (0,0))
-    screen.blit(back,(0,386))
-
-    draw_text('press 1 to exit', font, WHITE, 10, 35)
-
-
-
     player.update()
     player.draw()
-
-    enemy.update()
-    enemy.draw()
 
     bullet_group.update()
     bullet_group.draw(screen)
@@ -225,8 +197,6 @@ while run:
                 down = True
             if event.key == pygame.K_SPACE:
                 shoot = True
-            if event.key == pygame.K_1:
-                exit()
             #if event.key == pygame.K_a:
                          #       lef = True
                         #if event.key == pygame.K_d:
