@@ -7,7 +7,7 @@ width, height = 800, 640
 screen = pygame.display.set_mode((width, height))
 
 pygame.display.set_caption('helicopter')
-
+pygame.display.set_icon(pygame.image.load("img/player/player.png"))
 clock = pygame.time.Clock()
 fps = 60
 
