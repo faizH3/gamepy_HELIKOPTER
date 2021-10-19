@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # pertama import module pygame
 import pygame
 
